@@ -1,0 +1,64 @@
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+    ports:
+      - 3307:3306
+    volumes:
+      - ./svol/mysql:/var/lib/mysql
+    networks:
+      - snw
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 80:80
+    networks:
+      - snw
+    depends_on:
+      - mysql
+  api:
+    build: ./api
+    container_name: scalable-api
+    ports:
+      - 5000:5000
+    networks:
+      - snw
+    volumes:
+      - ./svol/api/upload:/app/upload
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  ui:
+    build: ./ui
+    ports:
+      - 8080:80
+    expose:
+      - 8080
+    restart: always
+    depends_on:
+      - api
+    networks:
+      - snw
+
+volumes:
+  svol:
+networks:
+  snw:

@@ -1,0 +1,8 @@
+flask
+flask-sqlalchemy
+python-dotenv
+pytest
+python-decouple
+gunicorn
+mysqlclient
+Flask-Cors==3.0.8

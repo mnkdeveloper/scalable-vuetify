@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scalable-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scalable-deployment
+  template:
+    metadata:
+      labels:
+        app: scalable-deployment
+    spec:
+      containers:
+      - name: scalable
+        image: scalable-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scalable-deployment-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scalable-deployment-2
+  template:
+    metadata:
+      labels:
+        app: scalable-deployment-2
+    spec:
+      containers:
+      - name: scalable-deployment-2
+        image: scalable-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+
